@@ -399,10 +399,6 @@ The scripts use settings-specific paths and load existing compatible MAT-files. 
 
 If you use this code in academic work, please cite the associated paper once the final citation details are available. Add the paper DOI and full bibliographic reference to this section when the repository is released.
 
-## License
-
-Add the license used for this repository here. If the repository follows the structure of the reference repository, an MIT License file can be included as `LICENSE`.
-
 ## Contact
 
-For questions, bug reports, or collaboration, please open a GitHub Issue or contact the repository maintainer.
+For questions, bug reports, or collaboration, please open a GitHub Issue or contact me on p.a.sanders@uu.nl
