@@ -287,7 +287,7 @@ All experiments use the rescaled parameters. To translate a result back to a phy
 | observation horizon | $\tau_{\max}=t_{\max} \sigma\sqrt{\lvert\alpha\rvert}$ | $\tau_{\max}=t_{\max} \sigma\sqrt{k_\ast\lvert\alpha\rvert}$ |
 | spatial operator strength | – | $\gamma=\dfrac{\Gamma k_\ast^4}{\sigma\sqrt{k_\ast\lvert\alpha\rvert}}$ |
 | space | – | $X=k_\ast x$ |
-| criticality | $s=\operatorname{sgn}(\alpha)$ | $s=\operatorname{sgn}(\alpha)$ |
+| criticality | $s=\text{sgn}(\alpha)$ | $s=\text{sgn}(\alpha)$ |
 
 So stronger noise or a larger cubic coefficient increases $\tau_{\max}$ and decreases $\lvert\mu\rvert$ (and $\gamma$), all of which make the bifurcation type easier to identify, but in the subcritical case also make noise-induced tipping more likely.
 
