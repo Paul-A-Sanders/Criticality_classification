@@ -74,9 +74,8 @@ Section, table and figure numbers below refer to the submitted manuscript (22 Oc
 12. [Reproducibility](#reproducibility)
 13. [Troubleshooting](#troubleshooting)
 14. [Citation](#citation)
-15. [Acknowledgements](#acknowledgements)
-16. [License](#license)
-17. [Contact](#contact)
+15. [License](#license)
+16. [Contact](#contact)
 
 ---
 
@@ -823,12 +822,6 @@ The regression method for the linear (spatial) dynamics that this work extends w
   doi     = {10.1016/j.physd.2026.135300}
 }
 ```
-
----
-
-## Acknowledgements
-
-P.A.S. thanks the Centre for Complex Systems Studies (CCSS) at Utrecht University for supporting a research visit to the Technical University of Munich through the Swaantje Mondt Fund, made possible by a gift from Martine and Jaap Mondt. B.H. was funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation), project number 543917644.
 
 ---
 
