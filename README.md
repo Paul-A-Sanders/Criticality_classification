@@ -21,7 +21,7 @@
 </div>
 
 > [!NOTE]
-> **About this code.** The code was cleaned up and commented with the help of an AI assistant (Claude, by Anthropic). I have checked and tested it myself. If you find a bug, or if something is breaking, you are very welcome to email me at [p.a.sanders@uu.nl](mailto:p.a.sanders@uu.nl).
+> **About this code.** The code was cleaned up and commented with the help of an AI assistant. I have checked and tested it myself. If you find a bug, or if something is breaking, you are very welcome to email me at [p.a.sanders@uu.nl](mailto:p.a.sanders@uu.nl).
 
 ---
 
