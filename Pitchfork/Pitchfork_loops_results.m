@@ -99,7 +99,7 @@ kc_shat    = 2;   % theta = [mu_hat; s_hat]; component 2 (s_hat) is the ROC scor
 nThetaComp = 2;   % Number of fitted components that are kept.
 
 % --- Run control ---
-rerunSimulations = true;   % true: ignore any saved MAT-file and simulate again
+rerunSimulations = false;   % true: ignore any saved MAT-file and simulate again
 
 nMu = numel(mu_values);
 
