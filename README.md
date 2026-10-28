@@ -466,7 +466,7 @@ Estimates the pitchfork coefficients from a trajectory (or a trajectory prefix).
 | `R` | Residuals of the regression (not used by the combined script, which calls the function with `~` for `R` and `rmse`). |
 | `rmse` | Root-mean-square of the residuals. |
 
-The least-squares problem is solved with MATLAB’s backslash operator (theta = B \ q_tau), as in analyze_SH_scaled; for a rectangular design matrix this uses a QR factorisation and warns if the matrix is rank deficient.
+The least-squares problem is solved with MATLAB’s backslash operator `(theta = B \ q_tau)`, as in analyze_SH_scaled; for a rectangular design matrix this uses a QR factorisation and warns if the matrix is rank deficient.
 
 ### `simulate_scaled_SH_Fourier`
 
