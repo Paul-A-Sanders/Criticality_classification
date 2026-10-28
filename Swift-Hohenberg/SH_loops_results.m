@@ -1,15 +1,17 @@
 % SH_loops_results.m
 % =========================================================================
 % PURPOSE
-%   Generate stochastic Swift-Hohenberg data on a periodic domain with an
+%   Generate noisy Swift-Hohenberg data on a periodic domain with an
 %   FFT-based solver, estimate the model's linear and cubic coefficients
 %   together with the wavenumber and growth rate of the most unstable
 %   mode (analyze_SH_scaled), and test how well the fitted cubic
-%   coefficient s_hat separates the two signs s = +1 and s = -1:
+%   coefficient s_hat separates the two signs s = +1 and s = -1.
 %
-%       dq = [mu*q - gamma*(1+d_xx)^2*q + s*q^3] dtau ,
-%
-%   with mu < 0 and a fixed gamma (see gamma_value).
+%   Data are generated with the stochastic Swift-Hohenberg equation
+%       dq = [mu*q - gamma*(1+d_xx)^2*q + s*q^3] dtau + dW ,
+%   with mu < 0 and a fixed gamma (see gamma_value), and fitted to the
+%   deterministic model (the noise is not fitted)
+%       q_tau = a0*q + a2*q_xx + a4*q_xxxx + s*q^3 .
 %
 % WORKFLOW
 %   1. If a compatible processed MAT-file exists, load it and skip the
