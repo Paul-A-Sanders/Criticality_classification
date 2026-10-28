@@ -126,7 +126,7 @@ The repository has one folder per model. Each folder holds **all code of that mo
 │   ├── Pitchfork_loops_results.m               # entry point: simulate + analyse + ROC/AUC + figures
 │   └── Pitchfork_ROC_nr=100_tmin=1_tmax=5e+03_nt=12_dt=0.01/   # data and figures of the paper run
 │
-└── Swift_Hohenberg/
+└── Swift-Hohenberg/
     ├── simulate_scaled_SH_Fourier.m            # periodic FFT-based SH simulator
     ├── analyze_SH_scaled.m                     # coefficients, dispersion relation, k_max
     ├── SH_loops_results.m                      # entry point: tau_max sweep at fixed gamma
@@ -151,7 +151,7 @@ The repository has one folder per model. Each folder holds **all code of that mo
 
 | Requirement | Used for |
 | --- | --- |
-| **MATLAB R2020a or newer** (developed with R2025b) | scripts, local functions, string scalars such as `"White"`, `exportgraphics`, `tiledlayout`, `orderedcolors` |
+| **MATLAB R2020a or newer** (developed with R2026b) | scripts, local functions, string scalars such as `"White"`, `exportgraphics`, `tiledlayout`, `orderedcolors` |
 | **Parallel Computing Toolbox** | `parfor` simulation batches |
 | **Statistics and Machine Learning Toolbox** | `perfcurve` (ROC/AUC), `ksdensity` (density panels), `prctile` (dispersion summaries) |
 | MATLAB graphics | `exportgraphics`, `savefig`, tiled layouts, figure annotations |
@@ -174,7 +174,7 @@ cd Criticality_classification
 All code of a model sits in one folder, next to the output folder of the paper run. The combined scripts create their output, and look for saved data, in the **current folder**, so run them from inside the model folder. MATLAB finds the functions in the current folder, so no `addpath` is needed:
 
 ```matlab
-cd Pitchfork            % or: cd Swift_Hohenberg
+cd Pitchfork            % or: cd Swift-Hohenberg
 ```
 
 **3. Run a combined script by name**
@@ -183,7 +183,7 @@ cd Pitchfork            % or: cd Swift_Hohenberg
 % in Pitchfork/
 Pitchfork_loops_results                  % mu and tau_max sweep
 
-% in Swift_Hohenberg/
+% in Swift-Hohenberg/
 SH_loops_results                         % tau_max sweep at fixed gamma
 SH_loops_results_gamma                   % gamma sweep at fixed tau_max
 ```
@@ -201,7 +201,7 @@ With the default settings, a script finds the data of the paper run (`saved_data
 >
 > ```matlab
 > repoRoot = pwd;
-> addpath(fullfile(repoRoot,'Pitchfork'));     % or 'Swift_Hohenberg' (code only, no genpath)
+> addpath(fullfile(repoRoot,'Pitchfork'));     % or 'Swift-Hohenberg' (code only, no genpath)
 > mkdir('results'); cd('results');             % outputs are created here
 > Pitchfork_loops_results
 > ```
@@ -250,26 +250,33 @@ Other things to check before a production run: the time step `dt_target` (only l
 
 ## Models and method
 
+> [!NOTE]
+> **Noisy data, deterministic fit.** The stochastic equations below are only used to *generate* noisy data. The regression does not model the noise: it fits the data to the deterministic (drift-only) normal form, for the pitchfork $\dot q=\mu q+s q^3$ and for Swift–Hohenberg $\dot q=\mu q-\gamma(1+\partial_X^2)^2q+s q^3$. The noise enters the fit only through the data, as fluctuations around the equilibrium.
+
 ### Pitchfork normal form
 
-*(Paper, Section 3.1.)* The stochastic pitchfork normal form with additive noise, $\mathrm{d}u=(r u+\alpha u^3) \mathrm{d}t+\sigma \mathrm{d}W_t$, is rescaled to
+*(Paper, Section 3.1.)* **Data generation.** The stochastic pitchfork normal form with additive noise, $\mathrm{d}u=(r u+\alpha u^3) \mathrm{d}t+\sigma \mathrm{d}W_t$, is rescaled to
 
 $$
 \mathrm{d}q = \left(\mu  q + s  q^{3}\right)\mathrm{d}\tau + \mathrm{d}W_\tau ,
 \qquad s\in\lbrace -1,+1 \rbrace,\quad \mu<0 .
 $$
 
+**Fitted model.** The data are fitted to the deterministic normal form $\dfrac{\mathrm{d}q}{\mathrm{d}\tau}=\mu q+s q^3$; the noise term is not part of the fit.
+
 Here $\mu$ is the scaled distance to the bifurcation at $\mu=0$ (relative to noise and nonlinearity), and $s=-1$ is the **supercritical**, $s=+1$ the **subcritical** case. The code keeps a noise amplitude `sigma` (default 1, which is the scaled model above). For $s=+1$, trajectories can leave the local region around $q=0$ (noise-induced tipping); such trajectories are excluded, see [Numerical and methodological notes](#numerical-and-methodological-notes).
 
 ### Swift–Hohenberg equation
 
-*(Paper, Section 4.1.)* On a periodic one-dimensional domain the reduced stochastic Swift–Hohenberg equation is
+*(Paper, Section 4.1.)* **Data generation.** On a periodic one-dimensional domain the data are generated with the reduced stochastic Swift–Hohenberg equation
 
 $$
 \mathrm{d}q = \left[\mu  q - \gamma (1+\partial_X^2)^2 q + s  q^{3}\right]\mathrm{d}\tau + \mathrm{d}W_\tau ,
 $$
 
-with linear dispersion relation $\lambda(k)=\mu-\gamma(1-k^2)^2$. Its maximum is $\lambda=\mu$ at $k=1$, so $\mu$ controls stability while $\gamma$ controls how strongly the modes around $k=1$ are damped (large $\gamma$: narrow band of weakly damped modes; small $\gamma$: broad band). Expanding the operator gives the coefficients the regression should recover:
+**Fitted model.** The data are fitted to the deterministic part, $\partial_\tau q=a_0 q+a_2 q_{XX}+a_4 q_{XXXX}+s q^3$; again the noise term is not fitted.
+
+The deterministic part has the linear dispersion relation $\lambda(k)=\mu-\gamma(1-k^2)^2$. Its maximum is $\lambda=\mu$ at $k=1$, so $\mu$ controls stability while $\gamma$ controls how strongly the modes around $k=1$ are damped (large $\gamma$: narrow band of weakly damped modes; small $\gamma$: broad band). Expanding the operator gives the coefficients the regression should recover:
 
 $$
 a_0=\mu-\gamma,\qquad a_2=-2\gamma,\qquad a_4=-\gamma,\qquad s .
@@ -297,7 +304,7 @@ So stronger noise or a larger cubic coefficient increases $\tau_{\max}$ and decr
 
 1. computes the time derivative by a **forward difference**, $\dfrac{q_{i+1}-q_i}{\tau_{i+1}-\tau_i}$ (consistent with Euler–Maruyama);
 2. computes spatial derivatives **spectrally** with the FFT (Swift–Hohenberg only);
-3. regresses the time derivative on a small library of candidate terms by least squares:
+3. regresses the time derivative on a small library of candidate terms by least squares, i.e. it fits the deterministic normal form only (no noise term):
 
 | Model | Library | Fitted vector $\hat\theta$ | ROC score |
 | --- | --- | --- | --- |
@@ -349,7 +356,7 @@ rerunSimulations      = false;
 
 ### Swift–Hohenberg observation-horizon sweep
 
-**Script:** `Swift_Hohenberg/SH_loops_results.m`
+**Script:** `Swift-Hohenberg/SH_loops_results.m`
 **Functions:** [`simulate_scaled_SH_Fourier`](#function-reference), [`analyze_SH_scaled`](#function-reference)
 
 Sweeps $\mu$ and $\tau_{\max}$ at a **fixed** `gamma_value`. What it does:
@@ -387,7 +394,7 @@ rerunSimulations      = false;
 
 ### Swift–Hohenberg gamma sweep
 
-**Script:** `Swift_Hohenberg/SH_loops_results_gamma.m`
+**Script:** `Swift-Hohenberg/SH_loops_results_gamma.m`
 **Functions:** [`simulate_scaled_SH_Fourier`](#function-reference), [`analyze_SH_scaled`](#function-reference)
 
 The $\gamma$-sweep counterpart of `SH_loops_results.m`: it varies the spatial parameter $\gamma$ at fixed observation horizon(s). For every $(\mu,\gamma,s)$ it collects `n_realizations` **complete** runs (all fitted quantities finite at every requested horizon); if fewer than 10 % of the first batch are usable, that combination is skipped and left empty. It produces one set of ROC and dispersion figures per $\gamma$, and an AUC-versus-$\mu$ figure with one line per $\gamma$.
@@ -519,8 +526,8 @@ Each model folder contains the **complete output folder of the paper runs**: the
 | Combined script | Output folder of the paper run |
 | --- | --- |
 | `Pitchfork/Pitchfork_loops_results.m` | `Pitchfork/Pitchfork_ROC_nr=100_tmin=1_tmax=5e+03_nt=12_dt=0.01/` |
-| `Swift_Hohenberg/SH_loops_results.m` | `Swift_Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=0.00025/` |
-| `Swift_Hohenberg/SH_loops_results_gamma.m` | `Swift_Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=5e-05_gamma/` |
+| `Swift-Hohenberg/SH_loops_results.m` | `Swift-Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=0.00025/` |
+| `Swift-Hohenberg/SH_loops_results_gamma.m` | `Swift-Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=5e-05_gamma/` |
 
 Each folder has the layout described under [Saved results and figures](#saved-results-and-figures) (`saved_data/`, `auc_plots/`, `ridge_plots_all/`, ...). The processed data contain the fitted coefficients, the seed IDs and the AUC values; the raw trajectories are not stored. You can use the folders in two ways.
 
@@ -529,7 +536,7 @@ Each folder has the layout described under [Saved results and figures](#saved-re
 **2. Regenerate the figures from the stored data.** The code and the output folder sit in the same folder on purpose: a combined script builds the name of its output folder from its settings, looks for it in the current folder, and loads `saved_data/*.mat` if it is there. So it is enough to go to the model folder and run the script by name:
 
 ```matlab
-cd Pitchfork                             % or: cd Swift_Hohenberg
+cd Pitchfork                             % or: cd Swift-Hohenberg
 Pitchfork_loops_results                  % prints "Found saved data at ... Loading and skipping simulations..."
 ```
 
@@ -562,7 +569,7 @@ The folders were produced with the settings listed in [Settings used in the pape
 
 The smaller time step of the $\gamma$ sweep keeps the explicit Euler scheme stable for the largest $\gamma$ and $\lvert\mu\rvert$. With $\Delta X=0.2\pi$ the largest resolved wavenumber is $k=5$, so the damping rate of the stiffest mode is about $\lvert\mu\rvert+576 \gamma$ and the stability condition reads $\Delta\tau (\lvert\mu\rvert+576 \gamma)<2$. For $\gamma=50$ and $\mu=-100$ this gives $1.45$ with $\Delta\tau=5\times10^{-5}$.
 
-**Which file is which figure of the paper** (numbers of the submitted manuscript). Folder abbreviations: **PF** = `Pitchfork/Pitchfork_ROC_nr=100_tmin=1_tmax=5e+03_nt=12_dt=0.01/`, **SH-τ** = `Swift_Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=0.00025/`, **SH-γ** = `Swift_Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=5e-05_gamma/`. In the file names, `62.8319` is $L=20\pi$.
+**Which file is which figure of the paper** (numbers of the submitted manuscript). Folder abbreviations: **PF** = `Pitchfork/Pitchfork_ROC_nr=100_tmin=1_tmax=5e+03_nt=12_dt=0.01/`, **SH-τ** = `Swift-Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=0.00025/`, **SH-γ** = `Swift-Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=5e-05_gamma/`. In the file names, `62.8319` is $L=20\pi$.
 
 | Paper | Content | File(s) |
 | --- | --- | --- |
@@ -668,11 +675,11 @@ Output folders of runs with other settings are created next to the code, in the 
 ```gitignore
 # Output folders created when the combined scripts are run with other settings ...
 /Pitchfork/Pitchfork_ROC_*/
-/Swift_Hohenberg/SH_ROC_*/
+/Swift-Hohenberg/SH_ROC_*/
 # ... except the shipped output folders of the paper runs
 !/Pitchfork/Pitchfork_ROC_nr=100_tmin=1_tmax=5e+03_nt=12_dt=0.01/
-!/Swift_Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=0.00025/
-!/Swift_Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=5e-05_gamma/
+!/Swift-Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=0.00025/
+!/Swift-Hohenberg/SH_ROC_scaled_FFT_mu_s_real=100_dx=0.2pi_dt=5e-05_gamma/
 # Optional: a separate working folder, and MATLAB autosave files
 /results/
 *.asv
