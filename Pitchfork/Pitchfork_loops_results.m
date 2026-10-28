@@ -1,11 +1,13 @@
 % Pitchfork_loops_results.m
 % =========================================================================
 % PURPOSE
-%   Test how well the fitted cubic coefficient s_hat of data from a
-%   stochastic pitchfork normal form separates the two criticality classes
-%   (s = +1 subcritical, s = -1 supercritical):
+%   Test how well the fitted cubic coefficient s_hat separates the two
+%   criticality classes (s = +1 subcritical, s = -1 supercritical).
 %
-%       dq = (mu*q + s*q^3) dtau,      mu < 0 .
+%   Noisy data are generated with the stochastic pitchfork normal form
+%       dq = (mu*q + s*q^3) dtau + sigma*dW ,      mu < 0 ,
+%   and fitted to the deterministic normal form (the noise is not fitted)
+%       dq/dtau = mu*q + s*q^3 .
 %
 %   Trajectories are simulated for a sweep of mu values and both classes,
 %   the coefficients [mu_hat; s_hat] are estimated from the first tau_max
