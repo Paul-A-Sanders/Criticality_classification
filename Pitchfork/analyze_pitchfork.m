@@ -24,11 +24,11 @@ function [theta, R, rmse] = analyze_pitchfork(q_time, tau)
 %     The regression uses forward differences, matching the Euler-Maruyama
 %     scheme in simulate_pitchfork:
 %         (q_{j+1} - q_j)/(tau_{j+1} - tau_j)  ~  mu*q_j + s*q_j^3
-%     The least-squares problem is solved with a cascade of increasingly
-%     robust solvers: QR decomposition, then the normal equations, then the
-%     pseudo-inverse (with a warning) if the design matrix is nearly singular.
+%     The least-squares problem is solved with MATLAB's backslash operator,
+%     as in analyze_SH_scaled. For a rectangular design matrix this uses a
+%     QR factorisation and warns if the matrix is rank deficient.
 %
-%   See also SIMULATE_PITCHFORK.
+%   See also SIMULATE_PITCHFORK, ANALYZE_SH_SCALED.
 
 %% Input checks and shaping
 q_time = q_time(:);
@@ -51,32 +51,8 @@ q3_left = q_left.^3;
 
 B = [q_left, q3_left];             % Design matrix [q, q^3]
 
-%% Least-squares solve
-tol_rcond = 1e-12;                 % Minimum acceptable rcond for the normal equations
-
-try
-    [Q,Rqr] = qr(B,0);             % Economy-size QR
-    if min(abs(diag(Rqr))) > eps*max(abs(diag(Rqr)))*100
-        % Well-conditioned: solve via QR
-        theta = Rqr \ (Q' * q_tau);
-    else
-        rc = rcond(B' * B);
-        if rc > tol_rcond
-            % Moderately conditioned: normal equations
-            theta = (B' * B) \ (B' * q_tau);
-        else
-            % Nearly singular: minimum-norm solution via pseudo-inverse
-            theta = pinv(B) * q_tau;
-            warning('analyze_pitchfork:IllConditioned', ...
-                'Design matrix nearly singular (rcond=%g). Used pinv fallback.', rc);
-        end
-    end
-catch
-    % Any failure above (e.g. non-finite data): fall back to pinv
-    theta = pinv(B) * q_tau;
-    warning('analyze_pitchfork:FallbackPINV', ...
-        'QR solve failed; used pinv fallback.');
-end
+%% Least-squares fit
+theta = B \ q_tau;                 % theta = [mu_hat; s_hat]
 
 %% Residuals and RMSE
 prediction = B * theta;
