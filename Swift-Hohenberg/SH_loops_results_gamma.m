@@ -1,13 +1,11 @@
 % SH_loops_results_gamma.m
 % -------------------------------------------------------------------------
-% PURPOSE
-%   Generate stochastic Swift--Hohenberg (SH) data while varying gamma,
-%   estimate the model coefficients from every realization, and summarise
-%   (i) how well the estimated cubic coefficient s_hat separates the two
-%   normal-form classes s = +1 and s = -1 (ROC / AUC) and (ii) how well the
-%   fitted dispersion relation matches the theoretical one.
-%   This is the gamma-sweep counterpart of SH_loops_results.m, which sweeps
-%   the observation horizon tau_max at fixed gamma.
+% MODEL
+%   Data are generated with the stochastic Swift-Hohenberg equation
+%       dq = [ mu*q - gamma*(1 + d_xx)^2 q + s*q^3 ] dtau + dW ,
+%   and fitted to its deterministic part (the noise is not fitted, see
+%   FITTED QUANTITIES below). The linear dispersion relation of the
+%   deterministic part is lambda(k) = mu - gamma*(1 - k^2)^2.
 %
 % MODEL
 %   dq = [ mu*q - gamma*(1 + d_xx)^2 q + s*q^3 ] dtau + dW
